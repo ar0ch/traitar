@@ -89,11 +89,13 @@ def heatmap(x, row_header, column_header, row_method,
     #norm = mpl.colors.Normalize(vmin/2, vmax/2) ### adjust the max and min to scale these colors
 
     ### Scale the Matplotlib window size
-    default_window_hight = 8.5
+    default_window_hight = 8.5 + (len(row_header) - 30) / 10
+    default_window_hight = 20
+    #default_window_hight = 8.5 + (120 - 30) / 10
     default_window_width = 12
-    fig = pylab.figure(figsize=(default_window_width,default_window_hight)) ### could use m,n to scale here
+    fig = pylab.figure(figsize=(default_window_width, default_window_hight)) ### could use m,n to scale here
     color_bar_w = 0.015 ### Sufficient size to show
-    color_bar_w = 0.015 ### Sufficient size to show
+    color_bar_h = 0.015 ### Sufficient size to show
         
     ## calculate positions for all elements
     # ax1, placement of dendrogram 1, on the left of the heatmap
@@ -101,30 +103,29 @@ def heatmap(x, row_header, column_header, row_method,
     [ax1_x, ax1_y, ax1_w, ax1_h] = [0.05,0.22,0.2,0.6]   ### The second value controls the position of the matrix relative to the bottom of the view
     width_between_ax1_axr = 0.004
     height_between_ax1_axc = 0.004 ### distance between the top color bar axis and the matrix
+    ax1_h = ax1_h / (1 + 2 / len(row_header)) 
     
     # axr, placement of row side colorbar
-    [axr_x, axr_y, axr_w, axr_h] = [0.31,0.1,color_bar_w,0.6] ### second to last controls the width of the side color bar - 0.015 when showing
+    [axr_x, axr_y, axr_w, axr_h] = [0.31, ax1_y ,color_bar_w, ax1_h] ### second to last controls the width of the side color bar - 0.015 when showing
     axr_x = ax1_x + ax1_w + width_between_ax1_axr
-    axr_y = ax1_y; axr_h = ax1_h
     width_between_axr_axm = 0.004
 
     # axc, placement of column side colorbar
-    [axc_x, axc_y, axc_w, axc_h] = [0.4,0.63,0.5,color_bar_w] ### last one controls the hight of the top color bar - 0.015 when showing
+    [axc_x, axc_y, axc_w, axc_h] = [0.4,0.63,0.5,color_bar_h] ### last one controls the hight of the top color bar - 0.015 when showing
     axc_x = axr_x + axr_w + width_between_axr_axm
     axc_y = ax1_y + ax1_h + height_between_ax1_axc
     height_between_axc_ax2 = 0.004
 
     # axm, placement of heatmap for the data matrix
-    [axm_x, axm_y, axm_w, axm_h] = [0.4,0.9,2.5,0.5]
+    [axm_x, axm_y, axm_w, axm_h] = [0.4, ax1_y, axc_w, ax1_h]
     axm_x = axr_x + axr_w + width_between_axr_axm
     axm_y = ax1_y; axm_h = ax1_h
-    axm_w = axc_w
+    ax2_w = axc_w
 
     # ax2, placement of dendrogram 2, on the top of the heatmap
-    [ax2_x, ax2_y, ax2_w, ax2_h] = [0.3,0.72,0.6,0.15] ### last one controls hight of the dendrogram
+    [ax2_x, ax2_y, ax2_w, ax2_h] = [0.3, 0.72, axc_w ,0.15] ### last one controls hight of the dendrogram
     ax2_x = axr_x + axr_w + width_between_axr_axm
     ax2_y = ax1_y + ax1_h + height_between_ax1_axc + axc_h + height_between_axc_ax2
-    ax2_w = axc_w
 
     # placement of the phenotype legend
     [axpl_x, axpl_y, axpl_w, axpl_h] = [0.07,0.07,0.11,0.09]
@@ -135,8 +136,9 @@ def heatmap(x, row_header, column_header, row_method,
 
     # axcb - placement of the color legend
     [axcb_x, axcb_y, axcb_w, axcb_h] = [0.07,0.88,0.11,0.09]
-
-
+    
+    [ax2_h, axcb_h, axpl_h, axsl_h, color_bar_w] = [i / (default_window_hight / 8.5) for i in [ax2_h, axcb_h, axpl_h, axsl_h, color_bar_w]]      
+    
     # Compute and plot top dendrogram
     if not column_method is None:
         start_time = time.time()
